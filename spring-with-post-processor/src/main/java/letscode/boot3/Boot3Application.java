@@ -8,7 +8,10 @@ import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -52,7 +55,6 @@ public class Boot3Application {
 @Configuration
 @EnableTransactionManagement
 @ComponentScan
-@PropertySource("classpath:/application.properties")
 class DataConfiguration {
 
     private static CustomerService transactionalCustomerService(TransactionTemplate transactionTemplate, CustomerService delegate) {
