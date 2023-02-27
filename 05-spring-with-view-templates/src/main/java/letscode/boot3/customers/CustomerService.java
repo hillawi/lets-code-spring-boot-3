@@ -22,28 +22,24 @@ class CustomerService {
     private final ApplicationEventPublisher publisher;
     private final JdbcTemplate template;
     private final RowMapper<Customer> customerRowMapper =
-            (resultSet, rowNum) -> new Customer(resultSet.getInt("id"), resultSet.getString("name"),
-                    resultSet.getBoolean("subscribed"));
+            (resultSet, rowNum) -> new Customer(resultSet.getInt("id"), resultSet.getString("name"));
 
     CustomerService(JdbcTemplate template, ApplicationEventPublisher publisher) {
         this.template = template;
         this.publisher = publisher;
     }
 
-    public Customer add(String name, boolean subscribed) {
+    public Customer add(String name) {
         var al = new ArrayList<Map<String, Object>>();
         al.add(Map.of("id", Long.class));
         var keyHolder = new GeneratedKeyHolder(al);
         template.update(con -> {
             var ps = con.prepareStatement("""
-                              insert into customers (name , subscribed ) values(?, ?)
-                              on conflict on constraint customers_name_key do update set 
-                                  name = excluded.name ,
-                            subscribed = excluded.subscribed   
-                              """,
+                            insert into customers (name) values(?)
+                            on conflict on constraint customers_name_key do update set name = excluded.name  
+                            """,
                     Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, name);
-            ps.setBoolean(2, subscribed);
             return ps;
         }, keyHolder);
         var generatedId = keyHolder.getKeys().get("id");
@@ -56,10 +52,10 @@ class CustomerService {
 
     public Customer byId(Integer id) {
         return template.queryForObject(
-                "select id, name  ,subscribed  from customers where id =? ", customerRowMapper, id);
+                "select id, name  from customers where id =? ", customerRowMapper, id);
     }
 
     public Collection<Customer> all() {
-        return template.query("select id, name , subscribed  from customers", this.customerRowMapper);
+        return template.query("select id, name  from customers", this.customerRowMapper);
     }
 }
