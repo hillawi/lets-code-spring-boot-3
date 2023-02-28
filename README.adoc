@@ -1,0 +1,3 @@
+= Let's Code Spring Boot  3 Series by Josh Long
+
+This project has been forked from Josh's, see https://github.com/coffee-software-show/lets-code-spring-boot-3, and will be kept up to date.
